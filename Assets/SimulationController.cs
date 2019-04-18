@@ -125,10 +125,12 @@ public class SimulationController : MonoBehaviour
     {
         // Equation taken from https://en.wikipedia.org/wiki/Lennard-Jones_potential
 
-        float s_Over_r = sigma / radius;
+        float s_r = sigma / radius;
+        float sr6 = s_r * s_r * s_r * s_r * s_r * s_r;
 
-        float V = 4 * epsilon * (Mathf.Pow(s_Over_r, 12) - Mathf.Pow(s_Over_r, 6));
+        float V = 4 * epsilon * ((sr6 * sr6) - sr6);
 
         return V;
     }
+    
 }
