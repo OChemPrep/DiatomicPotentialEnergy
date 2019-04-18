@@ -65,11 +65,31 @@ public static class ElementHelper
 
     public static int GetRadius(Element element)
     {
-        int radius = 70;
+        int radius = 70; // Value for carbon.
 
-        if(ElementRadii.ContainsKey(element))
+        int atomicNumber = (int)element;
+
+        if(atomicNumber > 0 && atomicNumber < EmpiricalRadii.Length)
         {
-            radius = ElementRadii[element];
+            radius = EmpiricalRadii[atomicNumber];
+
+            if(radius < 0)
+                radius = CalculatedRadii[atomicNumber];
+        }
+
+        return radius;
+    }
+
+
+    public static int GetVanDerWaalRadius(Element element)
+    {
+        int radius = 170; // Value for carbon.
+
+        int atomicNumber = (int)element;
+
+        if(atomicNumber > 0 && atomicNumber < VanDerWaalsRadii.Length)
+        {
+            radius = VanDerWaalsRadii[atomicNumber];
         }
 
         return radius;
@@ -119,50 +139,7 @@ public static class ElementHelper
         {Element.Xenon, new Color32(66, 158, 176, 255)},
     };
 
-    // Source: Empirical column of https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_%28data_page%29
-    static readonly Dictionary<Element, int> ElementRadii = new Dictionary<Element, int>
-    {
-        {Element.Hydrogen, 25},
-        {Element.Helium, 120},
-        {Element.Lithium, 145},
-        {Element.Beryllium, 105},
-        {Element.Boron, 85},
-        {Element.Carbon, 70},
-        {Element.Nitrogen, 65},
-        {Element.Oxygen, 60},
-        {Element.Fluorine, 50},
-        {Element.Neon, 160},
-        {Element.Sodium, 180},
-        {Element.Magnesium, 150},
-        {Element.Aluminum, 125},
-        {Element.Silicon, 110},
-        {Element.Phosphorus, 100},
-        {Element.Sulfur, 100},
-        {Element.Chlorine, 100},
-        {Element.Argon, 71},
-        {Element.Potassium, 220},
-        {Element.Calcium, 180},
-        {Element.Scandium, 160},
-        {Element.Titanium, 140},
-        {Element.Vanadium, 135},
-        {Element.Chromium, 140},
-        {Element.Manganese, 140},
-        {Element.Iron, 140},
-        {Element.Cobalt, 135},
-        {Element.Nickel, 135},
-        {Element.Copper, 135},
-        {Element.Zinc, 135},
-        {Element.Gallium, 130},
-        {Element.Germanium, 125},
-        {Element.Arsenic, 115},
-        {Element.Selenium, 115},
-        {Element.Bromine, 115},
 
-        {Element.Iodine, 140},
-        {Element.Xenon, 108}, // Calculated
-    };
-
-    
     internal static string GetSymbol(Element element)
     {
         string symbol = "?";
@@ -178,6 +155,10 @@ public static class ElementHelper
     }
 
 
+    // Source: https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_%28data_page%29
     static readonly string[] ElementSymbols = { "?", "H", " He", " Li", "Be", " B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W1", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og" };
+    static readonly int[] EmpiricalRadii = { -1, 25, 120, 145, 105, 85, 70, 65, 60, 50, 160, 180, 150, 125, 110, 100, 100, 100, 71, 220, 180, 160, 140, 135, 140, 140, 140, 135, 135, 135, 135, 130, 125, 115, 115, 115, -1, 235, 200, 180, 155, 145, 145, 135, 130, 135, 140, 160, 155, 155, 145, 145, 140, 140, -1, 260, 215, 195, 185, 185, 185, 185, 185, 185, 180, 175, 175, 175, 175, 175, 175, 175, 155, 145, 135, 135, 130, 135, 135, 135, 150, 190, 180, 160, 190, -1, -1, -1, 215, 195, 180, 180, 175, 175, 175, 175, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+    static readonly int[] CalculatedRadii = { -1, 53, 31, 167, 112, 87, 67, 56, 48, 42, 38, 190, 145, 118, 111, 98, 88, 79, 71, 243, 194, 184, 176, 171, 166, 161, 156, 152, 149, 145, 142, 136, 125, 114, 103, 94, 88, 265, 219, 212, 206, 198, 190, 183, 178, 173, 169, 165, 161, 156, 145, 133, 123, 115, 108, 298, 253, 195, 158, 247, 206, 205, 238, 231, 233, 225, 228, 226, 226, 222, 222, 217, 208, 200, 193, 188, 185, 180, 177, 174, 171, 156, 154, 143, 135, 127, 120, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+    static readonly int[] VanDerWaalsRadii = { -1, 120, 140, 182, 153, 192, 170, 155, 152, 147, 154, 227, 173, 184, 210, 180, 180, 175, 188, 275, 231, 211, -1, -1, -1, -1, -1, -1, 163, 140, 139, 187, 211, 185, 190, 185, 202, 303, 249, -1, -1, -1, -1, -1, -1, -1, 163, 172, 158, 193, 217, 206, 206, 198, 216, 343, 268, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 175, 166, 155, 196, 202, 207, 197, 202, 220, 348, 283, -1, -1, -1, 186, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
     
 }

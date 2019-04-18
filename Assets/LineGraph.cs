@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LineGraph : MonoBehaviour
 {
-    public List<Vector3> Points;
+    public List<Vector2> Points;
 
     [SerializeField] RectTransform _content;
     [SerializeField] LineRenderer _dataLine;
@@ -18,6 +18,8 @@ public class LineGraph : MonoBehaviour
     public int PointCount => _dataLine.positionCount;
 
     Vector2 _markerPoint;
+
+    public bool IncludeOrigin { get; set; } = false;
 
 
     void Awake()
@@ -35,7 +37,7 @@ public class LineGraph : MonoBehaviour
     }
 
 
-    public Coroutine AnimateToData(List<Vector3> targetPoints)
+    public Coroutine AnimateToData(List<Vector2> targetPoints)
     {
         Coroutine c = StartCoroutine(AnimateToPoints(targetPoints));
 
@@ -45,14 +47,14 @@ public class LineGraph : MonoBehaviour
     }
 
 
-    IEnumerator AnimateToPoints(List<Vector3> targetPoints)
+    IEnumerator AnimateToPoints(List<Vector2> targetPoints)
     {
         float startTime = Time.time;
         float duration = 2;
         float endTime = startTime + duration;
 
-        var initialPoints = new List<Vector3>(Points);
-        var currentPoints = new List<Vector3>(Points);
+        var initialPoints = new List<Vector2>(Points);
+        var currentPoints = new List<Vector2>(Points);
 
         while(Time.time < endTime)
         {
@@ -91,13 +93,31 @@ public class LineGraph : MonoBehaviour
     }
 
 
-    void SetPositions(List<Vector3> points)
+    public void SetPoints(List<Vector2> points)
     {
-        _dataLine.SetPositions(points.ToArray());
+        Points = points;
+
+        SetPositions(Points);
+    }
+
+
+    void SetPositions(List<Vector2> points)
+    {
+        _dataLine.positionCount = points.Count;
 
         if(points.Count > 0)
         {
-            Bounds bounds = new Bounds(points[0], Vector3.zero);
+            for(int i = 0; i < points.Count; i++)
+            {
+                _dataLine.SetPosition(i, points[i]);
+            }
+
+            Bounds bounds = new Bounds(points[0], Vector2.zero);
+
+            if(IncludeOrigin)
+            {
+                bounds.Encapsulate(Vector2.zero);
+            }
 
             foreach(var point in points)
             {

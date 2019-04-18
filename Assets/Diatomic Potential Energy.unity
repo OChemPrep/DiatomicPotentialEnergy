@@ -2088,7 +2088,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &373296968
 RectTransform:
@@ -3458,7 +3458,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782885644}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -5872,8 +5872,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10.900024, y: 35.200012}
-  m_SizeDelta: {x: -421.8, y: -186.4}
+  m_AnchoredPosition: {x: -39.3, y: 91.8}
+  m_SizeDelta: {x: -321.4, y: -299.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1491837317
 MonoBehaviour:
@@ -8202,6 +8202,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4315843851196227257, guid: d584774408c0db5408951025c961f6ab,
+        type: 3}
+      propertyPath: m_Name
+      value: Audio Player
+      objectReference: {fileID: 0}
     - target: {fileID: 4315843851196227263, guid: d584774408c0db5408951025c961f6ab,
         type: 3}
       propertyPath: HighPopClip
@@ -8241,11 +8246,6 @@ PrefabInstance:
         type: 3}
       propertyPath: CameraReset
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4315843851196227257, guid: d584774408c0db5408951025c961f6ab,
-        type: 3}
-      propertyPath: m_Name
-      value: Audio Player
       objectReference: {fileID: 0}
     - target: {fileID: 4315843851196227260, guid: d584774408c0db5408951025c961f6ab,
         type: 3}

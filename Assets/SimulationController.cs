@@ -9,7 +9,21 @@ public class SimulationController : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(DemoGraphAnimation());
+        _graph.IncludeOrigin = true;
+        _graph.SetPoints(CalculatePotentialEnergyPoints(Element.Argon, Element.Argon, 350f, 1000f, _graph.PointCount));
+
+        Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
+        foreach(var point in _graph.Points)
+        {
+            if(point.y < minimumPoint.y)
+            {
+                minimumPoint = point;
+            }
+        }
+
+        _graph.SetMarkerPos(minimumPoint);
+
+        //StartCoroutine(DemoGraphAnimation());
     }
 
 
@@ -52,10 +66,10 @@ public class SimulationController : MonoBehaviour
     }
 
 
-    List<Vector3> GetRandomData()
+    List<Vector2> GetRandomData()
     {
         var pointCount = _graph.PointCount;
-        var points = new List<Vector3>(pointCount);
+        var points = new List<Vector2>(pointCount);
 
         float initialX = Random.Range(-200, 200);
         float dy = 0;
@@ -72,11 +86,40 @@ public class SimulationController : MonoBehaviour
     }
 
 
+    List<Vector2> CalculatePotentialEnergyPoints(Element a, Element b, float minRadius, float maxRadius, int numPoints)
+    {
+        var values = new List<Vector2>(numPoints);
+
+        var sigma = ElementHelper.GetVanDerWaalRadius(a) + ElementHelper.GetVanDerWaalRadius(b); // (pm)
+        float epsilon = 0.997f;// (kJ/mol) Value for Argon+Argon interaction. TODO: Make this dependent on the parameter elements.
+
+        float radius = minRadius;
+        float radiusDelta = (maxRadius - minRadius) / (numPoints - 1);
+        
+        for(int i = 0; i < numPoints; i++)
+        {
+            values.Add(new Vector2(radius, CalculatePotentialEnergy(sigma, epsilon, radius)));
+            radius += radiusDelta;
+        }
+
+        return values;
+    }
+
+
+    float CalculatePotentialEnergy(Element a, Element b, float radius)
+    {
+        var sigma = ElementHelper.GetVanDerWaalRadius(a) + ElementHelper.GetVanDerWaalRadius(b); // (pm)
+        float epsilon = 0.997f;// (kJ/mol) Value for Argon+Argon interaction. TODO: Make this dependent on the parameter elements.
+
+        return CalculatePotentialEnergy(sigma, epsilon, radius);
+    }
+
+
     float ArgonArgonPotential(float r)
     {
         return CalculatePotentialEnergy(3.4f, 0.997f, r);
     }
-    
+
 
     float CalculatePotentialEnergy(float sigma, float epsilon, float radius)
     {
