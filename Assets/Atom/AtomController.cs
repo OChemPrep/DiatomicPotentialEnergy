@@ -46,7 +46,27 @@ public class AtomController : MonoBehaviour
     [SerializeField] private Element _element;
     public Element Element { get => _element; set { _element = value; Refresh(); } }
 
+    [SerializeField] GameObject SelectionDisplay;
+
+    public bool IsSelected
+    {
+        get
+        {
+            return SelectionDisplay != null && SelectionDisplay.activeSelf;
+        }
+
+        set
+        {
+            if(SelectionDisplay)
+            {
+                SelectionDisplay.SetActive(value);
+            }
+        }
+    }
+
+
     [SerializeField] AtomSymbolDisplay SymbolDisplay;
+    
 
     public void SetShowSymbol(bool show)
     {
