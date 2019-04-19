@@ -6,16 +6,10 @@ using UnityEngine.UI;
 
 public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
-    public Element Element;
-
+    [SerializeField] Element _element;
     [SerializeField] ScrollRect _scrollRect;
-    enum State { Idle, DraggingObject, Scrolling, };
-    State _state = State.Idle;
-
+    
     AtomController _atomBeingDragged;
-
-    public bool Dragging => _atomBeingDragged != null;
-
     Vector3 _dragOffset;
 
     int _defaultLayer;
@@ -32,7 +26,7 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
             {
 
                 _potentialTargetAtom = value;
-                
+
             }
         }
     }
@@ -53,7 +47,7 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
         // Initialize the look of this control to be an atom of the specified element.
         _atomPreview = GetComponentInChildren<AtomController>();
-        _atomPreview.Element = Element;
+        _atomPreview.Element = _element;
         _atomPreview.Refresh();
 
         // Size this control based on the size of the preview atom.
@@ -63,9 +57,9 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
         _uiCamera = transform.root.GetComponent<Canvas>().worldCamera;
 
         _atomWorldRadius = (_atomPreview.transform.localScale).x / 2;
-        
+
     }
-    
+
 
 
     private void OnDestroy()
@@ -75,7 +69,7 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(_allowMultiMolecule && _state == State.Idle)
+        if(_allowMultiMolecule)
         {
             // Create atom in front of camera.
 
@@ -115,20 +109,17 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
             if(absDelta.y > absDelta.x)
             {
-                _state = State.Scrolling;
-
                 _scrollRect.OnBeginDrag(eventData);
+                eventData.pointerDrag = _scrollRect.gameObject;
             }
             else if(absDelta.x > absDelta.y)
             {
-                _state = State.DraggingObject;
-
-                _atomBeingDragged = AtomFactory.CreateAtomView(Element);
+                _atomBeingDragged = AtomFactory.CreateAtomView(_element);
                 _atomBeingDragged.gameObject.layer = _defaultLayer;
                 _atomBeingDragged.transform.localPosition = GetWorldDragPos(eventData.position);
-                
+
                 //eventData.pointerDrag = _atomBeingDragged.gameObject;
-                
+
                 Audio.PlayHighPop();
 
             }
@@ -138,16 +129,9 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(_state == State.Scrolling)
-        {
-            _scrollRect.OnDrag(eventData);
-        }
-        else if(_state == State.DraggingObject)
-        {
-            UpdatePotentialTarget(eventData);
+        UpdatePotentialTarget(eventData);
 
-            _atomBeingDragged.TargetPosition = GetWorldDragPos(eventData.position);
-        }
+        _atomBeingDragged.TargetPosition = GetWorldDragPos(eventData.position);
     }
 
 
@@ -191,23 +175,14 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if(_state == State.Scrolling)
-        {
-            _scrollRect.OnEndDrag(eventData);
-        }
-        else if(_state == State.DraggingObject)
-        {
-            var targetPos = GetWorldDragPos(eventData.position);
-            _atomBeingDragged.TargetPosition = targetPos;
+        var targetPos = GetWorldDragPos(eventData.position);
+        _atomBeingDragged.TargetPosition = targetPos;
 
-            _atomBeingDragged.gameObject.layer = _atomsLayer;
-            
-            // TODO: Do something here.
+        _atomBeingDragged.gameObject.layer = _atomsLayer;
 
-            _atomBeingDragged = null;
-            PotentialTargetAtom = null;
-        }
+        // TODO: Do something here.
 
-        _state = State.Idle;
+        _atomBeingDragged = null;
+        PotentialTargetAtom = null;
     }
 }
