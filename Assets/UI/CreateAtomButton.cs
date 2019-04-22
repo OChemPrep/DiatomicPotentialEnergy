@@ -8,12 +8,13 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 {
     [SerializeField] Element _element;
     [SerializeField] ScrollRect _scrollRect;
-    
+
     AtomController _atomBeingDragged;
     Vector3 _dragOffset;
 
-    int _defaultLayer;
+    int _ignoreRaycastLayer;
     int _atomsLayer;
+    int _atomsLayerMask;
 
     AtomController _potentialTargetAtom;
     AtomController PotentialTargetAtom
@@ -24,8 +25,17 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
         {
             if(_potentialTargetAtom != value)
             {
-
+                if(_potentialTargetAtom != null)
+                {
+                    _potentialTargetAtom.IsSelected = false;
+                }
+                
                 _potentialTargetAtom = value;
+
+                if(_potentialTargetAtom != null)
+                {
+                    _potentialTargetAtom.IsSelected = true;
+                }
 
             }
         }
@@ -43,7 +53,8 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
     void Awake()
     {
         _atomsLayer = LayerMask.NameToLayer("Atoms");
-        _defaultLayer = LayerMask.NameToLayer("Default");
+        _atomsLayerMask = LayerMask.GetMask("Atoms");
+        _ignoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
 
         // Initialize the look of this control to be an atom of the specified element.
         _atomPreview = GetComponentInChildren<AtomController>();
@@ -56,7 +67,7 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
         _uiCamera = transform.root.GetComponent<Canvas>().worldCamera;
 
-        _atomWorldRadius = (_atomPreview.transform.localScale).x / 2;
+        _atomWorldRadius = _atomPreview.transform.localScale.x / 2;
 
     }
 
@@ -69,11 +80,13 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(_allowMultiMolecule)
+        return;
+
+        if(_allowMultiMolecule && _atomBeingDragged == null)
         {
             // Create atom in front of camera.
 
-            var createdAtomController = new AtomController();
+            var createdAtomController = AtomFactory.CreateAtomView(_element);
             Vector3 screenCenter = new Vector3(0.5f, 0.5f, 6);
             Vector3 worldPos = Camera.main.ViewportToWorldPoint(screenCenter) + Random.insideUnitSphere * 3;
             createdAtomController.transform.position = Camera.main.transform.position + (-2 * Camera.main.transform.up);
@@ -94,7 +107,7 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
             // The UI Camera renders in "Screen Space - Camera" mode.
             // The button position must be converted to screen coordinates before comparing it to the mouse position.
             _dragOffset = _uiCamera.WorldToScreenPoint(transform.position) - (Vector3)eventData.position;
-            _dragOffset.z = _atomWorldRadius * 10;
+            _dragOffset.z -= 5;
         }
     }
 
@@ -115,10 +128,8 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
             else if(absDelta.x > absDelta.y)
             {
                 _atomBeingDragged = AtomFactory.CreateAtomView(_element);
-                _atomBeingDragged.gameObject.layer = _defaultLayer;
+                _atomBeingDragged.gameObject.layer = _ignoreRaycastLayer;
                 _atomBeingDragged.transform.localPosition = GetWorldDragPos(eventData.position);
-
-                //eventData.pointerDrag = _atomBeingDragged.gameObject;
 
                 Audio.PlayHighPop();
 
@@ -139,6 +150,11 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
     {
         AtomController potentialTarget = null;
 
+        if(Physics.SphereCast(Camera.main.ScreenPointToRay(eventData.position), 2, out RaycastHit hitInfo, 100, _atomsLayerMask))
+        {
+            potentialTarget = hitInfo.collider.GetComponent<AtomController>();
+        }
+
         if(potentialTarget != PotentialTargetAtom)
         {
             PotentialTargetAtom = potentialTarget;
@@ -153,7 +169,7 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
         Vector3 dragAtomPos = Camera.main.ScreenToWorldPoint(screenPos3D);
 
-        if(PotentialTargetAtom != null)
+        if(PotentialTargetAtom != null && Camera.main.orthographic == false)
         {
             // Move the atom being dragged a little closer to the camera than the potential target atom.
             var camPos = Camera.main.transform.position;
@@ -175,12 +191,12 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        var targetPos = GetWorldDragPos(eventData.position);
-        _atomBeingDragged.TargetPosition = targetPos;
+        if(_potentialTargetAtom != null)
+        {
+            _potentialTargetAtom.Element = _atomBeingDragged.Element;
+        }
 
-        _atomBeingDragged.gameObject.layer = _atomsLayer;
-
-        // TODO: Do something here.
+        Destroy(_atomBeingDragged.gameObject);
 
         _atomBeingDragged = null;
         PotentialTargetAtom = null;

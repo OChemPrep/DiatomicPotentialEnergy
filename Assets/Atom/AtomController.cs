@@ -74,6 +74,13 @@ public class AtomController : MonoBehaviour
     }
 
 
+    void Awake()
+    {
+        TargetPosition = transform.localPosition;
+        Refresh();
+    }
+
+
     private void OnEnable()
     {
         OnEnabled?.Invoke(this);
