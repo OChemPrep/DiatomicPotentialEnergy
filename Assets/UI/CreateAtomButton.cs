@@ -59,7 +59,6 @@ public class CreateAtomButton : MonoBehaviour, IInitializePotentialDragHandler, 
         // Initialize the look of this control to be an atom of the specified element.
         _atomPreview = GetComponentInChildren<AtomController>();
         _atomPreview.Element = _element;
-        _atomPreview.Refresh();
 
         // Size this control based on the size of the preview atom.
         var layoutElement = GetComponent<UnityEngine.UI.LayoutElement>();

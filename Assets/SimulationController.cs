@@ -10,7 +10,10 @@ public class SimulationController : MonoBehaviour
     void Start()
     {
         _graph.IncludeOrigin = true;
-        _graph.SetPoints(CalculatePotentialEnergyPoints(Element.Argon, Element.Argon, 350f, 1000f, _graph.PointCount));
+        Element a = Element.Argon;
+        Element b = Element.Argon;
+        float sigma = CalculateSigma(a, b);
+        _graph.SetPoints(CalculatePotentialEnergyPoints(a, b, sigma * 0.95f, 1000f, _graph.PointCount));
 
         Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
         foreach(var point in _graph.Points)
@@ -24,6 +27,18 @@ public class SimulationController : MonoBehaviour
         _graph.SetMarkerPos(minimumPoint);
 
         //StartCoroutine(DemoGraphAnimation());
+        //StartCoroutine(DemoMarker());
+    }
+
+
+    IEnumerator DemoMarker()
+    {
+
+        while(true)
+        {
+            yield return AnimateMark();
+            yield return new WaitForSeconds(2);
+        }
     }
 
 
@@ -90,12 +105,12 @@ public class SimulationController : MonoBehaviour
     {
         var values = new List<Vector2>(numPoints);
 
-        var sigma = ElementHelper.GetVanDerWaalRadius(a) + ElementHelper.GetVanDerWaalRadius(b); // (pm)
-        float epsilon = 0.997f;// (kJ/mol) Value for Argon+Argon interaction. TODO: Make this dependent on the parameter elements.
+        var sigma = CalculateSigma(a, b);
+        float epsilon = BondHelper.GetDiatomicBondStrength(a, b);
 
         float radius = minRadius;
         float radiusDelta = (maxRadius - minRadius) / (numPoints - 1);
-        
+
         for(int i = 0; i < numPoints; i++)
         {
             values.Add(new Vector2(radius, CalculatePotentialEnergy(sigma, epsilon, radius)));
@@ -108,16 +123,19 @@ public class SimulationController : MonoBehaviour
 
     float CalculatePotentialEnergy(Element a, Element b, float radius)
     {
-        var sigma = ElementHelper.GetVanDerWaalRadius(a) + ElementHelper.GetVanDerWaalRadius(b); // (pm)
-        float epsilon = 0.997f;// (kJ/mol) Value for Argon+Argon interaction. TODO: Make this dependent on the parameter elements.
+        var sigma = CalculateSigma(a, b);
+        
+        float epsilon = BondHelper.GetDiatomicBondStrength(a, b);
 
         return CalculatePotentialEnergy(sigma, epsilon, radius);
     }
 
 
-    float ArgonArgonPotential(float r)
+    float CalculateSigma(Element a, Element b)
     {
-        return CalculatePotentialEnergy(3.4f, 0.997f, r);
+        var sigma = ElementHelper.GetVanDerWaalRadius(a) + ElementHelper.GetVanDerWaalRadius(b); // (pm)
+
+        return sigma;
     }
 
 
