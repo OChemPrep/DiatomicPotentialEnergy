@@ -28,6 +28,8 @@ public class LineGraph : MonoBehaviour
         set { _bounds = value; RefreshBounds(); }
     }
 
+    List<LineRenderer> _prevDataLines = new List<LineRenderer>();
+
 
     void Awake()
     {
@@ -61,6 +63,8 @@ public class LineGraph : MonoBehaviour
 
     IEnumerator AnimateToPoints(List<Vector2> targetPoints)
     {
+        CreatePrevDataLine();
+
         float startTime = Time.time;
         float duration = 2;
         float endTime = startTime + duration;
@@ -84,13 +88,18 @@ public class LineGraph : MonoBehaviour
     }
 
 
-    internal void SetMarkerPos(Vector3 currentPoint)
+    internal void SetMarkerPos(Vector3 point)
     {
-        if(currentPoint.sqrMagnitude < float.MaxValue)
+        if(_bounds.Contains(point))
         {
-            _markerPoint = currentPoint;
+            SetMarkVisibility(true);
+            _markerPoint = point;
 
             RefreshMarkerPos();
+        }
+        else
+        {
+            SetMarkVisibility(false);
         }
     }
 
@@ -110,6 +119,7 @@ public class LineGraph : MonoBehaviour
 
     public void SetPoints(List<Vector2> points)
     {
+
         Points = points;
 
         SetPositions(Points);
@@ -188,4 +198,33 @@ public class LineGraph : MonoBehaviour
         }
     }
 
+
+    void CreatePrevDataLine()
+    {
+        var prevDataLine = Instantiate(_dataLine, _content);
+        prevDataLine.transform.Translate(Vector3.forward);
+        prevDataLine.positionCount = _dataLine.positionCount;
+        _prevDataLines.Add(prevDataLine);
+
+        for(int i = 0; i < _dataLine.positionCount; i++)
+        {
+            prevDataLine.SetPosition(i, _dataLine.GetPosition(i));
+        }
+
+        // Set colors of all prev data lines to fade them out.
+        Color c = Color.yellow;
+        for(int i = _prevDataLines.Count - 1; i >= 0; i--)
+        {
+            c.a *= 0.5f;
+            if(c.a <= 0.01f)
+            {
+                Destroy(_prevDataLines[i].gameObject);
+                _prevDataLines.RemoveAt(i);
+            }
+
+            _prevDataLines[i].startColor = c;
+            _prevDataLines[i].endColor = c;
+        }
+
+    }
 }

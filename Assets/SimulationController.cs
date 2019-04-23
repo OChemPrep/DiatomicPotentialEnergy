@@ -114,21 +114,33 @@ public class SimulationController : MonoBehaviour
         float sigma = CalculateSigma(a, b);
 
         var points = CalculatePotentialEnergyPoints(a, b, sigma * 0.95f, 1000f, _graph.PointCount);
-        if(_graph.Bounds.size.x == 0 || _graph.PointCount == 0)
-            _graph.SetPoints(points);
-        else
-            _graph.AnimateToData(points);
-
-        Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
-        foreach(var point in points)
+        if(points.Count > 0)
         {
-            if(point.y < minimumPoint.y)
+            if(_graph.Bounds.size.x == 0 || _graph.PointCount == 0)
             {
-                minimumPoint = point;
+                _graph.SetPoints(points);
             }
-        }
+            else
+            {
+                _graph.AnimateToData(points);
+            }
 
-        _graph.SetMarkerPos(minimumPoint);
+            Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
+            foreach(var point in points)
+            {
+                if(point.y < minimumPoint.y)
+                {
+                    minimumPoint = point;
+                }
+            }
+
+            _graph.SetMarkVisibility(true);
+            _graph.SetMarkerPos(minimumPoint);
+        }
+        else
+        {
+            _graph.SetMarkVisibility(false);
+        }
     }
 
 
@@ -136,16 +148,20 @@ public class SimulationController : MonoBehaviour
     {
         var values = new List<Vector2>(numPoints);
 
-        var sigma = CalculateSigma(a, b);
         float epsilon = BondHelper.GetDiatomicBondStrength(a, b);
 
-        float radius = minRadius;
-        float radiusDelta = (maxRadius - minRadius) / (numPoints - 1);
-
-        for(int i = 0; i < numPoints; i++)
+        if(epsilon > 0)
         {
-            values.Add(new Vector2(radius, CalculatePotentialEnergy(sigma, epsilon, radius)));
-            radius += radiusDelta;
+            var sigma = CalculateSigma(a, b);
+
+            float radius = minRadius;
+            float radiusDelta = (maxRadius - minRadius) / (numPoints - 1);
+
+            for(int i = 0; i < numPoints; i++)
+            {
+                values.Add(new Vector2(radius, CalculatePotentialEnergy(sigma, epsilon, radius)));
+                radius += radiusDelta;
+            }
         }
 
         return values;
