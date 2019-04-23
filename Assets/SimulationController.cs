@@ -5,26 +5,31 @@ using UnityEngine;
 public class SimulationController : MonoBehaviour
 {
     [SerializeField] LineGraph _graph;
+    [SerializeField] AxisDragHandler AxisDragHandler;
+    [SerializeField] AtomController LeftAtom;
+    [SerializeField] AtomController RightAtom;
+
+
+    void Awake()
+    {
+        AxisDragHandler.DistanceChanged += OnDistanceChanged;
+        LeftAtom.Refreshed += RefreshGraph;
+        RightAtom.Refreshed += RefreshGraph;
+    }
+
+
+    private void OnDistanceChanged(float distance)
+    {
+        float radius = distance;
+        float energy = CalculatePotentialEnergy(LeftAtom.Element, RightAtom.Element, radius);
+
+        _graph.SetMarkerPos(new Vector3(radius, energy));
+    }
 
 
     void Start()
     {
-        _graph.IncludeOrigin = true;
-        Element a = Element.Argon;
-        Element b = Element.Argon;
-        float sigma = CalculateSigma(a, b);
-        _graph.SetPoints(CalculatePotentialEnergyPoints(a, b, sigma * 0.95f, 1000f, _graph.PointCount));
-
-        Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
-        foreach(var point in _graph.Points)
-        {
-            if(point.y < minimumPoint.y)
-            {
-                minimumPoint = point;
-            }
-        }
-
-        _graph.SetMarkerPos(minimumPoint);
+        RefreshGraph();
 
         //StartCoroutine(DemoGraphAnimation());
         //StartCoroutine(DemoMarker());
@@ -101,6 +106,32 @@ public class SimulationController : MonoBehaviour
     }
 
 
+    private void RefreshGraph()
+    {
+        _graph.IncludeOrigin = true;
+        Element a = LeftAtom.Element;
+        Element b = RightAtom.Element;
+        float sigma = CalculateSigma(a, b);
+
+        var points = CalculatePotentialEnergyPoints(a, b, sigma * 0.95f, 1000f, _graph.PointCount);
+        if(_graph.Bounds.size.x == 0 || _graph.PointCount == 0)
+            _graph.SetPoints(points);
+        else
+            _graph.AnimateToData(points);
+
+        Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
+        foreach(var point in points)
+        {
+            if(point.y < minimumPoint.y)
+            {
+                minimumPoint = point;
+            }
+        }
+
+        _graph.SetMarkerPos(minimumPoint);
+    }
+
+
     List<Vector2> CalculatePotentialEnergyPoints(Element a, Element b, float minRadius, float maxRadius, int numPoints)
     {
         var values = new List<Vector2>(numPoints);
@@ -124,7 +155,7 @@ public class SimulationController : MonoBehaviour
     float CalculatePotentialEnergy(Element a, Element b, float radius)
     {
         var sigma = CalculateSigma(a, b);
-        
+
         float epsilon = BondHelper.GetDiatomicBondStrength(a, b);
 
         return CalculatePotentialEnergy(sigma, epsilon, radius);
@@ -150,5 +181,5 @@ public class SimulationController : MonoBehaviour
 
         return V;
     }
-    
+
 }

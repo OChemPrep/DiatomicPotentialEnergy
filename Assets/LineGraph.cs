@@ -21,6 +21,13 @@ public class LineGraph : MonoBehaviour
 
     public bool IncludeOrigin { get; set; } = false;
 
+    private Bounds _bounds;
+    public Bounds Bounds
+    {
+        get { return _bounds; }
+        set { _bounds = value; RefreshBounds(); }
+    }
+
 
     void Awake()
     {
@@ -34,6 +41,11 @@ public class LineGraph : MonoBehaviour
     {
         var pointCount = Mathf.FloorToInt(_rectTransform.rect.width / 2);
         _dataLine.positionCount = pointCount;
+
+        for(int i = 0; i < pointCount; i++)
+        {
+            Points.Add(Vector2.zero);
+        }
     }
 
 
@@ -74,9 +86,12 @@ public class LineGraph : MonoBehaviour
 
     internal void SetMarkerPos(Vector3 currentPoint)
     {
-        _markerPoint = currentPoint;
+        if(currentPoint.sqrMagnitude < float.MaxValue)
+        {
+            _markerPoint = currentPoint;
 
-        RefreshMarkerPos();
+            RefreshMarkerPos();
+        }
     }
 
 
@@ -112,54 +127,65 @@ public class LineGraph : MonoBehaviour
                 _dataLine.SetPosition(i, points[i]);
             }
 
-            Bounds bounds = new Bounds(points[0], Vector2.zero);
-
-            if(IncludeOrigin)
-            {
-                bounds.Encapsulate(Vector2.zero);
-            }
-
-            foreach(var point in points)
-            {
-                bounds.Encapsulate(point);
-            }
-
-            if(bounds.size.x > 0 && bounds.size.y > 0)
-            {
-                Vector3 contentScale = _rectTransform.rect.size / bounds.size;
-                contentScale.z = 1;
-                _content.localScale = contentScale;
-
-                Vector3 originOffset = -bounds.center * (Vector2)_content.localScale;
-                originOffset.z = _content.localPosition.z;
-                _content.localPosition = originOffset;
-
-                if(bounds.min.y <= 0 && bounds.max.y >= 0)
-                {
-                    _xAxis.enabled = true;
-                    _xAxis.SetPosition(0, new Vector3(bounds.min.x, 0, 1));
-                    _xAxis.SetPosition(1, new Vector3(bounds.max.x, 0, 1));
-                }
-                else
-                {
-                    _xAxis.enabled = false;
-                }
-
-                if(bounds.min.x <= 0 && bounds.max.x >= 0)
-                {
-                    _yAxis.enabled = true;
-                    _yAxis.SetPosition(0, new Vector3(0, bounds.min.y, 1));
-                    _yAxis.SetPosition(1, new Vector3(0, bounds.max.y, 1));
-                }
-                else
-                {
-                    _yAxis.enabled = false;
-                }
-            }
+            RefreshBounds();
 
             RefreshMarkerPos();
         }
     }
 
+
+    void RefreshBounds()
+    {
+        var points = Points;
+
+        //if(_bounds.size.x == 0)
+        {
+            _bounds = new Bounds(points[0], Vector2.zero);
+
+            if(IncludeOrigin)
+            {
+                _bounds.Encapsulate(Vector2.zero);
+            }
+
+            foreach(var point in points)
+            {
+                _bounds.Encapsulate(point);
+            }
+        }
+
+
+        if(_bounds.size.x > 0 && _bounds.size.y > 0)
+        {
+            Vector3 contentScale = _rectTransform.rect.size / _bounds.size;
+            contentScale.z = 1;
+            _content.localScale = contentScale;
+
+            Vector3 originOffset = -_bounds.center * (Vector2)_content.localScale;
+            originOffset.z = _content.localPosition.z;
+            _content.localPosition = originOffset;
+
+            if(_bounds.min.y <= 0 && _bounds.max.y >= 0)
+            {
+                _xAxis.enabled = true;
+                _xAxis.SetPosition(0, new Vector3(_bounds.min.x, 0, 1));
+                _xAxis.SetPosition(1, new Vector3(_bounds.max.x, 0, 1));
+            }
+            else
+            {
+                _xAxis.enabled = false;
+            }
+
+            if(_bounds.min.x <= 0 && _bounds.max.x >= 0)
+            {
+                _yAxis.enabled = true;
+                _yAxis.SetPosition(0, new Vector3(0, _bounds.min.y, 1));
+                _yAxis.SetPosition(1, new Vector3(0, _bounds.max.y, 1));
+            }
+            else
+            {
+                _yAxis.enabled = false;
+            }
+        }
+    }
 
 }
