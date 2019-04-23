@@ -53,15 +53,17 @@ public class AxisDragHandler : MonoBehaviour, IInitializePotentialDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        var worldPointerPos = transform.InverseTransformPoint(Camera.main.ScreenToWorldPoint(eventData.position));
+        var worldPointerPos = Camera.main.ScreenToWorldPoint(eventData.position);
+        var localPointerPos = transform.InverseTransformPoint(worldPointerPos);
 
         var atomPos = _atomBeingDragged.transform.localPosition;
-        atomPos.x = Mathf.Clamp(worldPointerPos.x, _minPos, _maxPos);
+        atomPos.x = Mathf.Clamp(localPointerPos.x, _minPos, _maxPos);
         _atomBeingDragged.transform.localPosition = atomPos;
 
         var worldDistance = Mathf.Abs(atomPos.x - _otherAtom.transform.localPosition.x);
 
-        var distance = worldDistance * ElementHelper.GetRadius(Element.Carbon) * 2;
+        // Scale the distance by the ratio of picometers to world units. (The diameter of a carbon atom)
+        var distance = worldDistance * ElementHelper.GetVanDerWaalRadius(Element.Carbon) * 2;
 
         DistanceChanged?.Invoke(distance);
     }

@@ -97,7 +97,7 @@ public class AtomController : MonoBehaviour
     public void Refresh()
     {
         // Set atom size relative to the size of a carbon atom.
-        transform.localScale = Vector3.one * ElementHelper.GetRadius(Element) / ElementHelper.GetRadius(Element.Carbon);
+        transform.localScale = Vector3.one * ElementHelper.GetVanDerWaalRadius(Element) / ElementHelper.GetVanDerWaalRadius(Element.Carbon);
 
         AtomRenderer.material.color = ElementHelper.GetColor(Element);
 
