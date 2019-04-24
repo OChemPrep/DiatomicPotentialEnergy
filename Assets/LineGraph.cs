@@ -30,6 +30,8 @@ public class LineGraph : MonoBehaviour
 
     List<LineRenderer> _prevDataLines = new List<LineRenderer>();
 
+    Coroutine _animateCoroutine;
+
 
     void Awake()
     {
@@ -51,20 +53,33 @@ public class LineGraph : MonoBehaviour
     }
 
 
+    public void SetPoints(List<Vector2> points)
+    {
+        Points = points;
+
+        SetLinePositions(Points);
+
+        CreatePrevDataLine();
+    }
+
+
     public Coroutine AnimateToData(List<Vector2> targetPoints)
     {
-        Coroutine c = StartCoroutine(AnimateToPoints(targetPoints));
+        if(_animateCoroutine != null)
+        {
+            StopCoroutine(_animateCoroutine);
+        }
+
+        _animateCoroutine = StartCoroutine(AnimateToPoints(targetPoints));
 
         Points = targetPoints;
 
-        return c;
+        return _animateCoroutine;
     }
 
 
     IEnumerator AnimateToPoints(List<Vector2> targetPoints)
     {
-        CreatePrevDataLine();
-
         float startTime = Time.time;
         float duration = 2;
         float endTime = startTime + duration;
@@ -83,8 +98,12 @@ public class LineGraph : MonoBehaviour
                 currentPoints[i] = Vector3.Lerp(initialPoints[i], targetPoints[i], t);
             }
 
-            SetPositions(currentPoints);
+            SetLinePositions(currentPoints);
         }
+
+        CreatePrevDataLine();
+
+        _animateCoroutine = null;
     }
 
 
@@ -117,16 +136,7 @@ public class LineGraph : MonoBehaviour
     }
 
 
-    public void SetPoints(List<Vector2> points)
-    {
-
-        Points = points;
-
-        SetPositions(Points);
-    }
-
-
-    void SetPositions(List<Vector2> points)
+    void SetLinePositions(List<Vector2> points)
     {
         _dataLine.positionCount = points.Count;
 
@@ -202,7 +212,9 @@ public class LineGraph : MonoBehaviour
     void CreatePrevDataLine()
     {
         var prevDataLine = Instantiate(_dataLine, _content);
-        prevDataLine.transform.Translate(Vector3.forward);
+
+        prevDataLine.transform.localPosition = Vector3.forward;
+
         prevDataLine.positionCount = _dataLine.positionCount;
         _prevDataLines.Add(prevDataLine);
 
@@ -215,15 +227,17 @@ public class LineGraph : MonoBehaviour
         Color c = Color.yellow;
         for(int i = _prevDataLines.Count - 1; i >= 0; i--)
         {
-            c.a *= 0.5f;
-            if(c.a <= 0.01f)
+            c.a = Mathf.Pow(0.5f, _prevDataLines.Count - i - 1);
+            if(c.a > 0.01f)
+            {
+                _prevDataLines[i].startColor = c;
+                _prevDataLines[i].endColor = c;
+            }
+            else
             {
                 Destroy(_prevDataLines[i].gameObject);
                 _prevDataLines.RemoveAt(i);
             }
-
-            _prevDataLines[i].startColor = c;
-            _prevDataLines[i].endColor = c;
         }
 
     }
