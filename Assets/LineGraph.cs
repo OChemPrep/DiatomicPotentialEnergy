@@ -176,6 +176,8 @@ public class LineGraph : MonoBehaviour
 
         if(_bounds.size.x > 0 && _bounds.size.y > 0)
         {
+            _bounds.min = new Vector3(_bounds.min.x, _bounds.min.y * 1.2f);
+
             Vector3 contentScale = _rectTransform.rect.size / _bounds.size;
             contentScale.z = 1;
             _content.localScale = contentScale;

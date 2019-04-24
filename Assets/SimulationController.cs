@@ -113,7 +113,7 @@ public class SimulationController : MonoBehaviour
         Element b = RightAtom.Element;
         float sigma = CalculateSigma(a, b);
 
-        var points = CalculatePotentialEnergyPoints(a, b, sigma * 0.95f, 1000f, _graph.PointCount);
+        var points = CalculatePotentialEnergyPoints(a, b, sigma * 0.95f, 1500f, _graph.PointCount);
         if(points.Count > 0)
         {
             if(_graph.Bounds.size.x == 0 || _graph.PointCount == 0)
@@ -125,17 +125,10 @@ public class SimulationController : MonoBehaviour
                 _graph.AnimateToData(points);
             }
 
-            Vector2 minimumPoint = new Vector2(0, float.PositiveInfinity);
-            foreach(var point in points)
-            {
-                if(point.y < minimumPoint.y)
-                {
-                    minimumPoint = point;
-                }
-            }
-
             _graph.SetMarkVisibility(true);
-            _graph.SetMarkerPos(minimumPoint);
+            var distance = AxisDragHandler.CalculateDistance();
+            var energy = CalculatePotentialEnergy(LeftAtom.Element, RightAtom.Element, distance);
+            _graph.SetMarkerPos(new Vector2(distance, energy));
         }
         else
         {
