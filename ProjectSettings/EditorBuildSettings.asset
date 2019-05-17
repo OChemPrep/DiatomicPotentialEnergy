@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Diatomic Potential Energy.unity
+    guid: abb93e97247ef4443994ce100360d20b
   m_configObjects: {}
