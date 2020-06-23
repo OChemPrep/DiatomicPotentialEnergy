@@ -1,0 +1,190 @@
+@font-face {
+    font-family: 'PT Sans';
+    src: url(../fonts/PTSans-Bold.woff) format('woff');
+}
+
+* {
+    font-family: 'PT Sans';
+}
+
+* {
+    padding: 0;
+    margin: 0
+}
+
+body {
+    overflow: hidden;
+}
+
+button:focus {
+    outline: 0;
+}
+
+#react-app {
+    z-index: 1;
+}
+
+.panel {
+    background: #ffffff70;
+    color: #555;
+    border-radius: 85px;
+}
+
+.button {
+    bottom: 90px;
+    left: 20px;
+    width: 70px;
+    height: 70px;
+    background: #ffffffdd;
+    color: #676767;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 38px;
+    border: none;
+    transition: 0.4s;
+    transform-style: preserve-3d;
+}
+
+.button:hover {
+    background: #bbb;
+}
+
+.button:active {
+    margin-top: 1px;
+    background: #404040;
+}
+
+.button-round {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border: none;
+    background: #474747;
+    border-radius: 50%;
+    font-size: 28px;
+    color: #c8c8c8;
+}
+
+.button-round:hover {
+    background: #303030;
+}
+
+.button-faded {
+    background: #80808050;
+    color: #77777790;
+    pointer-events: none;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.modal {
+    position: absolute;
+    left: 10%;
+    top: 10%;
+    width: 80%;
+    height: 80%;
+    z-index: 2;
+    box-sizing: border-box;
+    padding: 40px;
+}
+
+.modal-content {
+    height: 100%;
+    overflow: auto;
+}
+
+.modal-close-button {
+    right: 5px;
+    top: 5px;
+    position: absolute;
+}
+
+.modal-close-button:active {
+    top: 6px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.toast {
+    position: absolute;
+    left: calc(50% - 150px);
+    top: -100px;
+    width: 300px;
+    z-index: 2;
+    box-sizing: border-box;
+    padding: 15px;
+    border-color: #b8710c;
+    background: #eccfa4;
+    transition: 0.6s;
+    user-select: none;
+}
+
+.toast-down {
+    top: 15px;
+}
+
+.toast-icon {
+    float: left;
+    color: #b8710c;
+    font-size: 26px;
+}
+
+.toast-content {
+    float: left;
+    margin-top: 7px;
+    margin-left: 9px;
+}
+
+.toast-close-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    width: 20px;
+    height: 20px;
+    color: #b8710c;
+    font-size: 20px;
+}
+
+.chart-data {
+    position: absolute;
+    bottom: 100px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.chart-warning {
+    margin: auto;
+    text-align: center;
+}
+
+.chart-stats {
+    margin: auto;
+    width: 150px;
+}
+
+.chart-stats-row {
+    /* display: flex; */
+}
+
+.chart-stats-value {
+    margin-left: 5px;
+}
+
+@media only screen and (max-width: 800px) {
+    .button {
+        left: 15px;
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+    .button-round {
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+}

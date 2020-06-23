@@ -1,0 +1,169 @@
+.atom-pool {
+    position: absolute;
+    box-sizing: border-box;
+    top: 5%;
+    right: 2%;
+    width: 130px;
+    height: 90%;
+    font-size: 30px;
+    padding: 10px 5px 10px 10px;
+    z-index: 1;
+    overflow: auto;
+    transition: 0.6s;
+    text-align: center;
+    font-weight: bold;
+}
+
+.atom-pool::-webkit-scrollbar {
+    width: 10px;
+}
+
+.atom-pool {
+    scrollbar-width: thin;
+    scrollbar-color: #666 none;
+}
+
+.atom-pool::-webkit-scrollbar-track {
+    background: none;
+    height: 30%;
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+
+.atom-pool::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 6px;
+}
+
+/* .atom-pool-atom:first-child {
+    height: 70px;
+    width: 70px;
+    padding: 16px;
+}
+
+.atom-pool-atom:first-child .atom-pool-atom-shadow {
+    height: 70px;
+    width: 70px;
+}
+
+.atom-pool-atom:first-child .atom-pool-atom-symbol {
+    font-size: 30px;
+} */
+
+.atom-pool-atom {
+    border-radius: 50%;
+    margin: 10px auto 15px auto;
+    height: 92px;
+    width: 92px;
+    box-shadow: 0px 3px 6px #00000069;
+    cursor: pointer;
+    position: relative;
+    box-sizing: border-box;
+    transition: 0.2s;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.atom-pool-atom-shadow {
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    background: transparent radial-gradient(closest-side at 43% 44%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .05) 52%, rgba(0, 0, 0, .25) 100%) 0% 0% no-repeat padding-box;
+    user-select: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.atom-pool-atom:hover {
+    /* border: 1px solid #666; */
+}
+
+.atom-pool-atom:hover .atom-pool-atom-symbol {
+    margin-top: 1px;
+}
+
+.atom-pool-atom:hover .atom-pool-atom-shadow {
+    background: transparent radial-gradient(closest-side at 43% 44%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .15) 52%, rgba(0, 0, 0, .35) 100%) 0% 0% no-repeat padding-box;
+}
+
+.atom-pool-atom-symbol {
+    /* font-size: 40px; */
+    font-weight: bold;
+}
+
+.atom-pool-button {
+    position: absolute;
+    top: calc(50% - 25px);
+    right: calc(3% + 130px);
+    font-size: 38px;
+    z-index: 2;
+    transition: 0.6s;
+    transform-style: preserve-3d;
+}
+
+.pushed .atom-pool {
+    right: -170px;
+}
+
+.pushed .atom-pool-button {
+    right: 15px;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+@media only screen and (max-width: 800px) {
+    .atom-pool {
+        top: 100px;
+        right: 15px;
+        width: 65px;
+        padding: 10px 5px 10px 10px;
+        height: calc(100% - 140px);
+    }
+    .atom-pool-atom:first-child {
+        height: 35px;
+        width: 35px;
+        padding: 9px;
+    }
+    .atom-pool-atom:first-child .atom-pool-atom-shadow {
+        height: 35px;
+        width: 35px;
+    }
+    .atom-pool-atom:first-child .atom-pool-atom-symbol {
+        font-size: 14px;
+    }
+    .atom-pool-atom {
+        margin: 10px auto 15px auto;
+        height: 45px;
+        width: 45px;
+        padding: 10px;
+    }
+    .atom-pool-atom-shadow {
+        height: 45px;
+        width: 45px;
+    }
+    .atom-pool-atom-symbol {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .atom-pool-atom:hover {
+        border: none;
+    }
+    .atom-pool-button {
+        top: calc(50% + 25px);
+        right: 105px;
+        font-size: 20px;
+    }
+    .pushed .atom-pool {
+        right: -85px;
+    }
+    .pushed .atom-pool-button {
+        right: 10px;
+    }
+    .atom-pool::-webkit-scrollbar-track {
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+}
