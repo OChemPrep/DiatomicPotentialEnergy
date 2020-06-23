@@ -1,2 +1,2 @@
-# lewis-3d
-Alchemie 3d Lewis Structure Explorer
+# diatomic energy explorer
+Alchemie explorer for viewing the graph of potential energy between two given atoms.
