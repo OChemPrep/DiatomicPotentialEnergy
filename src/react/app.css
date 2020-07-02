@@ -164,16 +164,16 @@ button:focus {
 
 .chart-stats {
     margin: auto;
-    width: 150px;
 }
 
 .chart-stats-row {
-    /* display: flex; */
+    display: flex;
 }
 
 .chart-stats-value {
-    margin-left: 5px;
-}
+    margin-left: 45%;
+} 
+
 
 @media only screen and (max-width: 800px) {
     .button {
@@ -186,5 +186,14 @@ button:focus {
         width: 25px;
         height: 25px;
         font-size: 14px;
+    } 
+    .chart-stats {
+        position: fixed;
+        bottom: 0px;
     }
+    .chart-stats {
+        position: fixed;
+        bottom: 0;
+    }
+    
 }

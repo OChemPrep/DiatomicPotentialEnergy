@@ -62,6 +62,10 @@ export default class GraphController {
       yaxis: { range: [this.graphLowerLimit, this.graphUpperLimit], title: { text: 'Energy Potential (kJ/mol)' } },
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
+      showlegend: true,
+      legend: {
+        xanchor: 'right',
+      },
       colorway: ['#f3cec9', '#e7a4b6', '#cd7eaf', '#a262a9'],
     };
   }
