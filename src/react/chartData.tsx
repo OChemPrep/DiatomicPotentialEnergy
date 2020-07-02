@@ -38,10 +38,10 @@ export default class ChartData extends React.Component<{}, ChartDataState> {
 
         return <div className="chart-stats">
             <div className="chart-stats-row">
-                Energy Potential: <div className="chart-stats-value">{energyPotential} kJ/mol</div>
+             <div className="chart-stats-value">Energy Potential: {energyPotential} kJ/mol</div>
             </div>
             <div className="chart-stats-row">
-                Distance: <div className="chart-stats-value">{distance} pm</div>
+                <div className="chart-stats-value">Distance: {distance} pm</div>
             </div>
         </div>;
     }

@@ -24,7 +24,7 @@
       height: 60% !important;
       width: 60% !important;
       left: 20%;
-      top: 5%;
+      top: -5%;
     }
 
     #chart-indicator {
@@ -36,6 +36,22 @@
       position: absolute;
       transform: translate(-50%, -50%);
     }
+
+    @media only screen and (max-width: 800px) {
+      .atom-pool-atom-shadow {
+        height: 35px !important;
+        width: 35px !important;
+      }
+      .atom-pool-atom {
+        height: 35px !important;
+        width: 35px !important;
+      }
+      .atom-pool-atom-symbol {
+        font-size: 12px !important
+        ;
+      }
+    }
+
   </style>
 </head>
 
