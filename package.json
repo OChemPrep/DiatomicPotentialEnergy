@@ -54,7 +54,7 @@
   "dependencies": {
     "@types/chart.js": "^2.9.21",
     "@types/d3": "^5.7.2",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "d3": "^5.7.0",
     "plotly.js-dist": "^1.54.1"
   }
